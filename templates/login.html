@@ -2,17 +2,108 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Zoo Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f0;
+        }
+
+        /* Header */
+        header {
+            background-color: #2d5a27; /* Zoo green */
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Center login box */
+        .login-box {
+            width: 300px;
+            margin: 60px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px #cccccc;
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2d5a27;
+        }
+
+        /* Input styles */
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* Button */
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #2d5a27;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .login-btn:hover {
+            background-color: #23461f;
+        }
+
+        /* Small links */
+        .links {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #2d5a27;
+            text-decoration: none;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Please enter your credentials to log into your account</h1>
-    <form action="{% url 'login' %}" method="POST">
-        <label>Username:</label>
-        <input type="text" name="username" required>
-        <label>Password:</label>
-        <input type="password" name="password" required>
-        <input type="submit" value="submit">
+
+<header>
+    Lakeside Zoo – Login
+</header>
+
+<div class="login-box">
+    <h2>Log In</h2>
+
+    <form action="#">
+        <label>Username</label>
+        <input type="text" placeholder="Enter username">
+
+        <label>Password</label>
+        <input type="password" placeholder="Enter password">
+
+        <button class="login-btn">Login</button>
     </form>
-    <a href="{% url 'home' %}"> Return to Homepage </a>
+
+    <div class="links">
+        <a href="#">Forgot Password?</a><br>
+        <a href="homepage.html">Back to Homepage</a>
+    </div>
+</div>
+
 </body>
 </html>
