@@ -17,11 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from Zootopia.views import HomePage, Login, Register
+from Zootopia.views import HomePage, Login, Register, ZooKeeper
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomePage.as_view(), name='home'),
     path('login/', Login.as_view(), name='login'),
     path('register/', Register.as_view(), name='register'),
+    path('zoo/', ZooKeeper.as_view(), name='zookeeper'),
 ]

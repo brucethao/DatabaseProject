@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title> Welcome to !</title>
+    <title> home page</title>
 </head>
 <body>
-    <form action="" method="POST">
-        <input type="submit" value="login">
+    <div> welcome to some zoo!</div>
+    <form action="{% url 'home' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" name="login" value="login">
     </form>
-    <form action="" method="POST">
-        <input type="submit" value="register">
+    <form action="{% url 'home' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" name="register" value="register">
     </form>
 </body>
 </html>
