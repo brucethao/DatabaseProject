@@ -1,8 +1,13 @@
+from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+
 
 # Create your models here.
-class User(models.Model):
-    username = models.CharField(max_length = 100)
+class User(AbstractUser):
+    username = models.CharField(max_length = 100, unique = True, blank = False)
     password = models.CharField(max_length = 100)
     email = models.CharField(max_length = 100)
     first_name = models.CharField(max_length = 100)
@@ -24,10 +29,11 @@ class Animal(models.Model):
     classification = models.ForeignKey(Classification, on_delete = models.CASCADE)
     animal_habitat = models.ForeignKey(Location, on_delete = models.CASCADE)
 
+
 class Zookeeper(models.Model):
-    wage = models.DecimalField(max_digits = 5, decimal_places = 2)
-    hours = models.DecimalField(max_digits = 5, decimal_places = 2)
-    user_id = models.ForeignKey(User, on_delete = models.CASCADE)
+    wage = models.DecimalField(max_digits = 5, decimal_places = 2, default = 7.50)
+    hours = models.DecimalField(max_digits = 5, decimal_places = 2, default = 8)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
 
 class Food(models.Model):
     food_name = models.CharField(max_length = 100)
@@ -68,3 +74,17 @@ class Show(models.Model):
 class Product(models.Model):
     item_name = models.CharField(max_length = 100)
     price = models.DecimalField(max_digits = 5, decimal_places = 2)
+
+    @receiver(post_save, sender=User)
+    def sync_zookeeper_profile(sender, instance, created, **kwargs):
+        if instance.is_zookeeper:
+            # get_or_create prevents crashing if the profile already exists
+            Zookeeper.objects.get_or_create(user=instance)
+        else:
+            # If they are NOT a zookeeper, find their profile and delete it
+            Zookeeper.objects.filter(user=instance).delete()
+
+    @receiver(post_delete, sender=Zookeeper)
+    def remove_zookeeper_flag(sender, instance, **kwargs):
+        # Updates the database with users that are not zookeepers ensuring the boolean field is false
+        User.objects.filter(id=instance.user_id).update(is_zookeeper=False)

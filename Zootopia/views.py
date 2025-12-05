@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
 from Zootopia.models import Animal, User
@@ -7,16 +8,10 @@ from Zootopia.models import Animal, User
 class HomePage(View):
     def get(self, request):
         return render(request, 'homepage.html')
-    def post(self, request):
-        login = request.POST.get('login')
-        register = request.POST.get('register')
 
-        if login is not None:
-            return redirect('login')
-        if register is not None:
-            return redirect('register')
-
-        return render(request, 'homepage.html')
+class AnimalPage(View):
+    def get(self, request):
+        return render(request, 'animal.html')
 
 class ZooKeeper(View):
     def get(self, request):
@@ -30,14 +25,12 @@ class Login(View):
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = User.objects.get(username=username, password=password)
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
+            login(request, user)
             messages.success(request, 'Login Successful')
-            if user.is_zookeeper:
-                return redirect('zookeeper')
-            else:
-                return redirect('home')
+            return redirect('home')
         else:
             messages.error(request, 'Wrong username or password')
             return render(request, 'login.html')

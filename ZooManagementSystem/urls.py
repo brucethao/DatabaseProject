@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from Zootopia.views import HomePage, Login, Register, ZooKeeper
+from Zootopia.models import Animal
+from Zootopia.views import HomePage, Login, Register, ZooKeeper, AnimalPage
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +26,5 @@ urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('register/', Register.as_view(), name='register'),
     path('zoo/', ZooKeeper.as_view(), name='zookeeper'),
+    path('animals/', AnimalPage.as_view(), name='animals'),
 ]
