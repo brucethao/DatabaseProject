@@ -7,11 +7,6 @@ from django.dispatch import receiver
 
 # Create your models here.
 class User(AbstractUser):
-    username = models.CharField(max_length = 100, unique = True, blank = False)
-    password = models.CharField(max_length = 100)
-    email = models.CharField(max_length = 100)
-    first_name = models.CharField(max_length = 100)
-    last_name = models.CharField(max_length = 100)
     is_zookeeper = models.BooleanField(default = False)
 
 class Location(models.Model):
