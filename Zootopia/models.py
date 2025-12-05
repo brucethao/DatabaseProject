@@ -12,6 +12,9 @@ class User(models.Model):
 class Location(models.Model):
     continent = models.CharField(max_length = 100)
     habitat = models.CharField(max_length = 100, unique = True)
+#unique shouldn't be the key if there is an idea also having uniqueness
+#prevents proper data to be stored (Ex. Continent: "North America" Habitat: "Wetlands")
+# & Continent: "North America" Habitat: "Wetlands") can't be stored together)
 
 class Classification(models.Model):
     type = models.CharField(max_length = 100)
@@ -23,6 +26,7 @@ class Animal(models.Model):
     weight = models.DecimalField(max_digits = 5, decimal_places = 2)
     classification = models.ForeignKey(Classification, on_delete = models.CASCADE)
     animal_habitat = models.ForeignKey(Location, on_delete = models.CASCADE)
+#Cannot add more than 3 digits before decimal point.
 
 class Zookeeper(models.Model):
     wage = models.DecimalField(max_digits = 5, decimal_places = 2)
@@ -52,6 +56,7 @@ class FunFact(models.Model):
     animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
     bio = models.CharField(max_length = 100)
     fun_facts = models.CharField(max_length = 100)
+    #Varchar length should be increased for descriptions.
 
 class AnimalMedicationLog(models.Model):
     animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
