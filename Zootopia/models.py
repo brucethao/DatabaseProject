@@ -6,6 +6,9 @@ from django.dispatch import receiver
 
 
 # Create your models here.
+
+# AbstractUser allows our user class to inherit Django's user fields (Username, password, first name, last name, etc.)
+# while using its authentication system in addition to our own fields
 class User(AbstractUser):
     is_zookeeper = models.BooleanField(default = False)
 
@@ -70,6 +73,9 @@ class Product(models.Model):
     item_name = models.CharField(max_length = 100)
     price = models.DecimalField(max_digits = 5, decimal_places = 2)
 
+
+    #Ensures that zookeeper object is created when a user is created to be a zookeeper
+    #Also deletes zookeeper object when user is removed as a zookeeper
     @receiver(post_save, sender=User)
     def sync_zookeeper_profile(sender, instance, created, **kwargs):
         if instance.is_zookeeper:
