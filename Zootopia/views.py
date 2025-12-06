@@ -7,7 +7,12 @@ from Zootopia.models import Animal, User
 # Create your views here.
 class HomePage(View):
     def get(self, request):
-        return render(request, 'homepage.html')
+        try:
+            user = request.user.first_name
+            context = {"user": user}
+        except AttributeError:
+            return render(request, 'homepage.html')
+        return render(request, 'homepage.html', context)
 
 class AnimalPage(View):
     def get(self, request):
@@ -53,7 +58,7 @@ class Register(View):
 
         if User.objects.filter(username=username).exists():
             messages.info(request, 'Username already exists. Please login or register a different user.')
-            return render(request, 'home.html')
+            return render(request, 'homepage.html')
         else:
             user = User.objects.create_user(
                 username=username,
