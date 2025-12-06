@@ -1,10 +1,145 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>zookeeper dashboard</title>
-</head>
+{% extends 'base.html' %}
+
+{% block title %}Zookeeper Dashboard{% endblock %}
+
+{% block content %}
+    <style>
+    body {font-family: Arial;}
+
+    /* tab section */
+    .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
+    .tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      padding: 14px 16px;
+      transition: 0.3s;
+      font-size: 15px;
+    }
+    .tab button:hover {
+      background-color: #ddd;
+    }
+    .tab button.active {
+      background-color: #ccc;
+    }
+    .tabcontent {
+      display: none;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-top: none;
+    }
+
+    /* logs section */
+    .logs-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    }
+    .log-section {
+        flex: 1;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #ffffff; /* pure white :) */
+    }
+    .log-section h4 {
+        margin-top: 0;
+    }
+
+    /* text formating */
+    .name, .species{
+        text-align: center;
+    }
+    </style>
+
 <body>
-    <div>Welcome to the zookeeper dashboard</div>
+    <h1 class="hero-title">Welcome keeper, {{ user.first_name }}</h1>
+    <div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Mort')">Mort</button>
+  <button class="tablinks" onclick="openCity(event, 'KingJulien')">King Julien</button>
+</div>
+
+<div id="Mort" class="tabcontent">
+    <h3 class="name">Mort</h3>
+    <p class="species">Mouse Lemur</p>
+
+    <div class="logs-container">
+        <div class="log-section">
+            <h4>Medication Log</h4>
+            <p>date!!!: Tylenol</p>
+            <p>date!!!: Tylenol</p>
+            <p>date!!!: Tylenol</p>
+            <p>date!!!: Tylenol</p>
+            <p>date!!!: Tylenol</p>
+        </div>
+
+        <div class="log-section">
+            <h4>Feeding Log</h4>
+            /* loop when actually using context */
+            <p>Time Fed: 5pm 12/5/2025</p>
+            <p>food_name: lettuce </p>
+            <p>amount: 2000 lbs</p>
+            <p>zoo boi: spongebop</p> <br>
+
+            <p>Time Fed: 6pm 12/5/2025</p>
+            <p>food_name: carrot </p>
+            <p>amount: 500 lbs</p>
+            <p>zoo boi: spongebop</p> <br>
+        </div>
+    </div>
+</div>
+
+<div id="KingJulien" class="tabcontent">
+    <h3 class="name">King Julien</h3>
+    <p class="species">Lemur</p>
+
+    <div class="logs-container">
+        <div class="log-section">
+            <h4>Medication Log</h4>
+            <p>date!!!: Tylenol</p>
+            <p>date!!!: Tylenol</p>
+            <p>date!!!: Tylenol</p>
+            <p>date!!!: Tylenol</p>
+            <p>date!!!: Tylenol</p>
+        </div>
+
+        <div class="log-section">
+            <h4>Feeding Log</h4>
+            <p>Time Fed: 5pm 12/5/2025</p>
+            <p>Time Fed: 6pm 12/5/2025</p>
+            <p>Time Fed: 7pm 12/5/2025</p>
+            <p>Time Fed: 8pm 12/5/2025</p>
+            <p>Time Fed: 9pm 12/5/2025</p>
+        </div>
+    </div>
+</div>
+
+<div id="Tokyo" class="tabcontent">
+  <h3>Tokyo</h3>
+  <p>Tokyo is the capital of Japan.</p>
+</div>
+
+<script>
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+
 </body>
-</html>
+
+{% endblock %}

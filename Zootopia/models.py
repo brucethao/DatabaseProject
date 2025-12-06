@@ -14,7 +14,17 @@ class User(AbstractUser):
 
 class Location(models.Model):
     continent = models.CharField(max_length = 100)
-    habitat = models.CharField(max_length = 100, unique = True)
+    habitat = models.CharField(max_length = 100)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['continent', 'habitat'],
+                name='unique_continent_habitat',
+                nulls_distinct=False  # Only one NULL allowed
+            )
+        ]
+# FIXED!
 #unique shouldn't be the key if there is an idea also having uniqueness
 #prevents proper data to be stored (Ex. Continent: "North America" Habitat: "Wetlands")
 # & Continent: "North America" Habitat: "Wetlands") can't be stored together)
@@ -26,10 +36,10 @@ class Animal(models.Model):
     name = models.CharField(max_length = 100)
     species = models.CharField(max_length=100)
     age = models.IntegerField(default = 0)
-    weight = models.DecimalField(max_digits = 5, decimal_places = 2)
+    weight = models.DecimalField(max_digits = 15, decimal_places = 2)
     classification = models.ForeignKey(Classification, on_delete = models.CASCADE)
     animal_habitat = models.ForeignKey(Location, on_delete = models.CASCADE)
-#Cannot add more than 3 digits before decimal point.
+#Cannot add more than 3 digits before decimal point. - FIXED!
 
 
 class Zookeeper(models.Model):
@@ -52,15 +62,15 @@ class AnimalFeedingLog(models.Model):
     zookeeper = models.ForeignKey(Zookeeper, on_delete = models.CASCADE)
 # to do
 class Medication(models.Model):
-    animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
     medication_name = models.CharField(max_length = 100)
     medication_amount = models.DecimalField(max_digits = 5, decimal_places = 2)
+    # removed animal, it is already in animal-medication log
 
 class FunFact(models.Model):
     animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
-    bio = models.CharField(max_length = 100)
-    fun_facts = models.CharField(max_length = 100)
-    #Varchar length should be increased for descriptions.
+    bio = models.CharField(max_length = 1024)
+    fun_facts = models.CharField(max_length = 1024)
+    #Varchar length should be increased for descriptions. - FIXED!
 
 class AnimalMedicationLog(models.Model):
     animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
@@ -68,11 +78,11 @@ class AnimalMedicationLog(models.Model):
     date = models.DateTimeField(auto_now_add = True)
 
 class Show(models.Model):
-    animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
+    name = models.CharField(max_length = 100) # name instead of animals, we can state the animals in description
     date = models.DateTimeField(auto_now_add = True)
-    ticket_price = models.DecimalField(max_digits = 5, decimal_places = 2)
+    ticket_price = models.DecimalField(max_digits = 10, decimal_places = 2)
     location = models.CharField(max_length = 100)
-    description = models.CharField(max_length = 100)
+    description = models.CharField(max_length = 1024)
 
 class Product(models.Model):
     item_name = models.CharField(max_length = 100)
