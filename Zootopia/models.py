@@ -62,8 +62,8 @@ class AnimalFeedingLog(models.Model):
 # to do
 class Medication(models.Model):
     medication_name = models.CharField(max_length = 100)
-    medication_amount = models.DecimalField(max_digits = 5, decimal_places = 2)
     # removed animal, it is already in animal-medication log
+    # moved amount to med-logs
 
 class FunFact(models.Model):
     animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
@@ -74,6 +74,7 @@ class FunFact(models.Model):
 class AnimalMedicationLog(models.Model):
     animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
     medication = models.ForeignKey(Medication, on_delete = models.CASCADE)
+    medication_amount = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
     date = models.DateTimeField(auto_now_add = True)
 
 class Show(models.Model):
