@@ -38,41 +38,52 @@
         }
 
         .register-box {
-            width: 340px;
+            width: 380px;
             margin: 50px auto;
             background-color: white;
             border-radius: 8px;
-            padding: 20px;
+            padding: 25px 35px; /* updated padding */
             box-shadow: 0 0 8px #cccccc;
         }
 
         .register-box h2 {
             text-align: center;
             margin-top: 0;
+            margin-bottom: 20px;
             color: #2d5a27;
+            font-size: 22px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-top: 10px;
+            margin-bottom: 4px;
             font-size: 14px;
+            font-weight: 600;
+            color: #2d5a27;
         }
 
+        /* ✅ Updated input styling */
         input[type="text"],
         input[type="password"],
         input[type="email"] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 4px;
+            width: 92%;              /* FIX: smaller and centered */
+            padding: 10px;
+            margin: 0 auto;          /* center input fields */
+            display: block;          /* allows centering */
             border-radius: 4px;
             border: 1px solid #cccccc;
             font-size: 14px;
+            box-sizing: border-box;
         }
 
         .register-btn {
             width: 100%;
-            padding: 10px;
-            margin-top: 15px;
+            padding: 12px;
+            margin-top: 10px;
             background-color: #2d5a27;
             color: white;
             border: none;
@@ -117,18 +128,37 @@
     <h2>Create Account</h2>
 
     <form action="#" method="post">
-        <!-- For Django: {% csrf_token %} -->
-        <label for="id_username">Username</label>
-        <input type="text" id="id_username" name="username" placeholder="Choose a username">
+        <!-- Django Users: {% csrf_token %} -->
 
-        <label for="id_email">Email</label>
-        <input type="email" id="id_email" name="email" placeholder="Enter your email">
+        <div class="input-group">
+            <label for="id_firstname">First Name</label>
+            <input type="text" id="id_firstname" name="first_name" placeholder="Enter your first name">
+        </div>
 
-        <label for="id_password1">Password</label>
-        <input type="password" id="id_password1" name="password1" placeholder="Create a password">
+        <div class="input-group">
+            <label for="id_lastname">Last Name</label>
+            <input type="text" id="id_lastname" name="last_name" placeholder="Enter your last name">
+        </div>
 
-        <label for="id_password2">Confirm Password</label>
-        <input type="password" id="id_password2" name="password2" placeholder="Confirm password">
+        <div class="input-group">
+            <label for="id_email">Email</label>
+            <input type="email" id="id_email" name="email" placeholder="Enter your email">
+        </div>
+
+        <div class="input-group">
+            <label for="id_username">Username</label>
+            <input type="text" id="id_username" name="username" placeholder="Choose a username">
+        </div>
+
+        <div class="input-group">
+            <label for="id_password1">Password</label>
+            <input type="password" id="id_password1" name="password1" placeholder="Create a password">
+        </div>
+
+        <div class="input-group">
+            <label for="id_password2">Confirm Password</label>
+            <input type="password" id="id_password2" name="password2" placeholder="Confirm password">
+        </div>
 
         <button type="submit" class="register-btn">Register</button>
     </form>
