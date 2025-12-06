@@ -7,8 +7,11 @@ from Zootopia.models import Animal, User
 # Create your views here.
 class HomePage(View):
     def get(self, request):
-        user = request.user.first_name
-        context = {"user": user}
+        try:
+            user = request.user.first_name
+            context = {"user": user}
+        except AttributeError:
+            return render(request, 'homepage.html')
         return render(request, 'homepage.html', context)
 
 class AnimalPage(View):

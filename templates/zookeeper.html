@@ -60,8 +60,8 @@
 <body>
     <h1 class="hero-title">Welcome keeper, {{ user.first_name }}</h1>
     <div class="tab">
-  <button class="tablinks" onclick="openCity(event, 'Mort')">Mort</button>
-  <button class="tablinks" onclick="openCity(event, 'KingJulien')">King Julien</button>
+  <button class="tablinks" onclick="viewAnimal(event, 'Mort')">Mort</button>
+  <button class="tablinks" onclick="viewAnimal(event, 'KingJulien')">King Julien</button>
 </div>
 
 <div id="Mort" class="tabcontent">
@@ -119,13 +119,8 @@
     </div>
 </div>
 
-<div id="Tokyo" class="tabcontent">
-  <h3>Tokyo</h3>
-  <p>Tokyo is the capital of Japan.</p>
-</div>
-
 <script>
-function openCity(evt, cityName) {
+function viewAnimal(view, Animal) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
   for (i = 0; i < tabcontent.length; i++) {
@@ -135,8 +130,8 @@ function openCity(evt, cityName) {
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
+  document.getElementById(Animal).style.display = "block";
+  view.currentTarget.className += " active";
 }
 </script>
 

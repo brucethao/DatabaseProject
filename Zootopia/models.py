@@ -21,7 +21,6 @@ class Location(models.Model):
             models.UniqueConstraint(
                 fields=['continent', 'habitat'],
                 name='unique_continent_habitat',
-                nulls_distinct=False  # Only one NULL allowed
             )
         ]
 # FIXED!
@@ -33,7 +32,7 @@ class Classification(models.Model):
     type = models.CharField(max_length = 100)
 
 class Animal(models.Model):
-    name = models.CharField(max_length = 100)
+    name = models.CharField(max_length = 100, default="default")
     species = models.CharField(max_length=100)
     age = models.IntegerField(default = 0)
     weight = models.DecimalField(max_digits = 15, decimal_places = 2)
