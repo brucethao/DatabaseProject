@@ -1,17 +1,23 @@
+from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+
 
 # Create your models here.
-class User(models.Model):
-    username = models.CharField(max_length = 100)
-    password = models.CharField(max_length = 100)
-    email = models.CharField(max_length = 100)
-    first_name = models.CharField(max_length = 100)
-    last_name = models.CharField(max_length = 100)
+
+# AbstractUser allows our user class to inherit Django's user fields (Username, password, first name, last name, etc.)
+# while using its authentication system in addition to our own fields
+class User(AbstractUser):
     is_zookeeper = models.BooleanField(default = False)
 
 class Location(models.Model):
     continent = models.CharField(max_length = 100)
     habitat = models.CharField(max_length = 100, unique = True)
+#unique shouldn't be the key if there is an idea also having uniqueness
+#prevents proper data to be stored (Ex. Continent: "North America" Habitat: "Wetlands")
+# & Continent: "North America" Habitat: "Wetlands") can't be stored together)
 
 class Classification(models.Model):
     type = models.CharField(max_length = 100)
@@ -23,11 +29,13 @@ class Animal(models.Model):
     weight = models.DecimalField(max_digits = 5, decimal_places = 2)
     classification = models.ForeignKey(Classification, on_delete = models.CASCADE)
     animal_habitat = models.ForeignKey(Location, on_delete = models.CASCADE)
+#Cannot add more than 3 digits before decimal point.
+
 
 class Zookeeper(models.Model):
-    wage = models.DecimalField(max_digits = 5, decimal_places = 2)
-    hours = models.DecimalField(max_digits = 5, decimal_places = 2)
-    user_id = models.ForeignKey(User, on_delete = models.CASCADE)
+    wage = models.DecimalField(max_digits = 5, decimal_places = 2, default = 7.50)
+    hours = models.DecimalField(max_digits = 5, decimal_places = 2, default = 8)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
 
 class Food(models.Model):
     food_name = models.CharField(max_length = 100)
@@ -52,6 +60,7 @@ class FunFact(models.Model):
     animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
     bio = models.CharField(max_length = 100)
     fun_facts = models.CharField(max_length = 100)
+    #Varchar length should be increased for descriptions.
 
 class AnimalMedicationLog(models.Model):
     animal = models.ForeignKey(Animal, on_delete = models.CASCADE)
@@ -68,3 +77,20 @@ class Show(models.Model):
 class Product(models.Model):
     item_name = models.CharField(max_length = 100)
     price = models.DecimalField(max_digits = 5, decimal_places = 2)
+
+
+    #Ensures that zookeeper object is created when a user is created to be a zookeeper
+    #Also deletes zookeeper object when user is removed as a zookeeper
+    @receiver(post_save, sender=User)
+    def sync_zookeeper_profile(sender, instance, created, **kwargs):
+        if instance.is_zookeeper:
+            # get_or_create prevents crashing if the profile already exists
+            Zookeeper.objects.get_or_create(user=instance)
+        else:
+            # If they are NOT a zookeeper, find their profile and delete it
+            Zookeeper.objects.filter(user=instance).delete()
+
+    @receiver(post_delete, sender=Zookeeper)
+    def remove_zookeeper_flag(sender, instance, **kwargs):
+        # Updates the database with users that are not zookeepers ensuring the boolean field is false
+        User.objects.filter(id=instance.user_id).update(is_zookeeper=False)
