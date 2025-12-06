@@ -1,25 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Lakeside Zoo{% endblock %}
+
+{% block content %}
     <h1>Please enter your credentials to register an account</h1>
-    <form action="{% url 'register' %}" method="POST">
+    <form method="POST">
         {% csrf_token %}
         <label>Username:</label>
-        <input type="text" name="username" required> <br>
+        <input type="text" name="username" placeholder="username" required> <br>
         <label>Password:</label>
-        <input type="password" name="password" required> <br>
+        <input type="password" name="password" placeholder="password" required> <br>
         <label>Email:</label>
-        <input type="email" name="email" required> <br>
+        <input type="email" name="email" placeholder="email" required> <br>
         <label>First name:</label>
-        <input type="text" name="first_name" required> <br>
+        <input type="text" name="first_name" placeholder="name" required> <br>
         <label>Last name:</label>
-        <input type="text" name="last_name" required> <br>
+        <input type="text" name="last_name" placeholder="name" required> <br>
         <input type="submit" value="submit">
     </form>
     <a href="{% url 'home' %}"> Return to Homepage </a>
-</body>
-</html>
+{% endblock %}

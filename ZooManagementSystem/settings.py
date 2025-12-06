@@ -78,7 +78,7 @@ DATABASES = {
        'ENGINE': 'django.db.backends.mysql',
        'NAME': 'zoomanagement',
        'USER': 'root',
-       'PASSWORD': 'cs557Project!',
+       'PASSWORD': 'lol123',
        'HOST': 'localhost',
        'PORT': '3306',
    }
@@ -125,3 +125,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'Zootopia.User'
