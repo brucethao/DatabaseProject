@@ -45,6 +45,11 @@ class Logout(View):
         logout(request)
         return redirect('home')
 
+class VisitUs(View):
+    def get(self, request):
+        return render(request, 'visitus.html')
+    def post(self, request):
+        pass
 
 class Register(View):
     def get(self, request):

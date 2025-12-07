@@ -13,9 +13,6 @@
             <nav>
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'animals' %}">Animals</a>
-                <a href="#">Visit Us</a>
-                <a href="#">Events</a>
-                <a href="#">Contact</a>
 
                 {% if user.is_authenticated %}
                     <span style="color: white; margin-left: 16px;">Welcome, {{ user.first_name }}</span>
@@ -23,7 +20,7 @@
                 {% else %}
                     <a href="{% url 'login' %}">Login</a>
                 {% endif %}
-                <button class="btn">Plan Your Visit</button>
+                <a href="{% url 'visitus' %}"> <button class="btn">Visit Us</button></a>
             </nav>
         </div>
     </header>
