@@ -4,23 +4,24 @@
 
 {% block content %}
     <main class="container">
+
         <!-- Hero section -->
         <section class="hero">
             {% if user.is_authenticated and user.is_zookeeper %}
-            <h1 class="hero-title">Welcome keeper, {{ user.first_name }}</h1>
-            <p class="hero-subtitle">
-                Ready to do zookeeper type shi?
-            </p>
-                {% elif user.is_authenticated %}
-            <h1 class="hero-title">Welcome, {{ user.first_name }}</h1>
-            <p class="hero-subtitle">
-                Check out some of the animals idiot!
-            </p>
-                {% else %}
-            <h1 class="hero-title">Welcome to the Lakeside Zoo</h1>
-            <p class="hero-subtitle">
-                Animals live here lol
-            </p>
+                <h1 class="hero-title">Welcome keeper, {{ user.first_name }}</h1>
+                <p class="hero-subtitle">
+                    Ready to do zookeeper type shi?
+                </p>
+            {% elif user.is_authenticated %}
+                <h1 class="hero-title">Welcome, {{ user.first_name }}</h1>
+                <p class="hero-subtitle">
+                    Check out some of the animals idiot!
+                </p>
+            {% else %}
+                <h1 class="hero-title">Welcome to the Lakeside Zoo</h1>
+                <p class="hero-subtitle">
+                    Animals live here lol
+                </p>
             {% endif %}
         </section>
 
@@ -51,46 +52,9 @@
             </div>
         </section>
 
-        <!-- Visit info -->
-        <section>
-            <h2>Plan Your Visit</h2>
-            <div class="visit-info">
-                <div class="visit-columns">
-                    <div class="visit-col">
-                        <strong>Hours</strong>
-                        <ul>
-                            <li>Monday – Friday: 9:00 AM – 5:00 PM</li>
-                            <li>Saturday – Sunday: 10:00 AM – 6:00 PM</li>
-                        </ul>
-                    </div>
-                    <div class="visit-col">
-                        <strong>Location</strong>
-                        <p>
-                            123 Zoo Lane<br>
-                            Campus City, WI 53000
-                        </p>
-                    </div>
-                    <div class="visit-col">
-                        <strong>Tickets</strong>
-                        <ul>
-                            <li>Adults: $12</li>
-                            <li>Students: $8</li>
-                            <li>Children (under 12): $6</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- (Events section removed) -->
 
-        <!-- Events -->
-        <section>
-            <h2>Today at the Zoo</h2>
-            <div class="events-list">
-                <ul>
-                    <li><strong>11:00 AM</strong> – Reptile Talk with Rich</li>
-                    <li><strong>1:30 PM</strong> – Lemur Feeding: Mort & King Julien</li>
-                    <li><strong>3:00 PM</strong> – Keeper Q&amp;A at the Mammal Habitat</li>
-                </ul>
-            </div>
-        </section>
+        <!-- (Visit / contact section removed) -->
+
+    </main>
 {% endblock %}
