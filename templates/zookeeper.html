@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<head>
+<head xmlns="http://www.w3.org/1999/html">
     {% load static %}
 
     <title>Lakeside Zoo – Zookeeper Panel</title>
@@ -99,11 +99,6 @@
             text-align: right;
         }
 
-        .animal-bio {
-            font-size: 12px;
-            margin: 6px 0 8px;
-        }
-
         .section-title {
             font-size: 12px;
             font-weight: bold;
@@ -116,277 +111,172 @@
             margin: 0 0 4px;
         }
 
-        .fun-fact {
-            font-style: italic;
+        .log-entry {
+            border-top: 1px solid grey;
+            padding: 5px;
+        }
+        .add {
+            width: 50px;
+            heigh: 75px;
+            border-radius: 5px;
+            background-color: #2a5d3b;
+            color: white;
+        }
+        .edit {
+            width: 50px;
+            heigh: 75px;
+            border-radius: 5px;
+            background-color: #2a5d3b;
+            color: white;
+        }
+        .delete {
+            width: 50px;
+            heigh: 75px;
+            border-radius: 5px;
+            background-color: red;
+            color: white;
+        }
+        input[type="text"]{
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
 <div class="zookeeper-box">
-    <h2>Animal Overview (IDs 1–10)</h2>
+    <h2>Zookeeper Dashboard</h2>
     <p class="subtitle">
-        Card view for diet, feeding, medication logs, and fun facts for active Zootopia animals.
+        Card view for diet, feeding, medication logs for all Lakeside Zoo animals.
     </p>
 
     <div class="animal-grid">
+        {% for animal in animals %}
+            <div class="animal-card">
+                <!-- This looks crazy... Trust me, I know -->
+                {% if animal.name == "Mort" %}
+                    <img src="{% static 'images/mort.png' %}" alt="Mort the mouse lemur" class="animal-photo">
+                {% elif animal.name == "King Julien" %}
+                    <img src="{% static 'images/kingjulien.png' %}" alt="King Julien the lemur" class="animal-photo">
+                {% elif animal.name == "Leila" %}
+                    <img src="{% static 'images/leila.jpeg' %}" alt="Leila the jaguar" class="animal-photo">
+                {% elif animal.name == "Madison" %}
+                    <img src="{% static 'images/madison-1.jpg.optimal.jpg' %}" alt="Madison the capybara" class="animal-photo">
+                {% elif animal.name == "Rich" %}
+                    <img src="{% static 'images/please work.jpg' %}" alt="Rich the alligator" class="animal-photo">
+                {% elif animal.name == "Rick" %}
+                    <img src="{% static 'images/rick.jpeg' %}" alt="Rick the garter snake" class="animal-photo">
+                {% elif animal.name == "Max" %}
+                    <img src="{% static 'images/max.jpg' %}" alt="Max the European badger" class="animal-photo">
+                {% elif animal.name == "Red" %}
+                    <img src="{% static 'images/red.jpg' %}" alt="Red the fox" class="animal-photo">
+                {% elif animal.name == "Tigress" %}
+                    <img src="{% static 'images/tigress.jpg' %}" alt="Tigress the Bengal tiger" class="animal-photo">
+                {% elif animal.name == "Big Back" %}
+                    <img src="{% static 'images/Bigback.png' %}" alt="BigBack the elephant" class="animal-photo">
+                {% else %}
+                    <p>No Image</p>
+                {% endif %}
 
-        <!-- 1. Mort -->
-        <div class="animal-card" id="animal-1">
-            <img src="{% static 'images/mort.png' %}" alt="Mort the mouse lemur" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">1. Mort</span>
-                <span class="animal-meta">ID: 1 • Mouse lemur • Africa</span>
+                <div class="animal-header">
+                    <span class="animal-name">{{ forloop.counter }}. {{ animal.name }}</span>
+                    <span class="animal-meta">{{ animal.species }} • {{ animal.animal_habitat.continent }}</span>
+                </div>
+
+                <!-- Diet Section  -->
+                <div class="diet-section">
+                    <div class="section-title">Zoo diet</div>
+                    <p class="section-text">
+                        {% for d in animal.diet_set.all %}
+                            {{ d.food_name.food_name }}{% if not forloop.last %}, {% else %}. {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+                <br>
+
+                <!-- Feed Section -->
+                <div class="section-title">Add a New Feed Record</div>
+                <div class="log-entry">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="animal_id" value="{{ animal.id }}">
+                        <input type="hidden" name="action" value="add_feed">
+
+                        <select name="food_id" required>
+                            {% for d in animal.diet_set.all %}
+                                <option value="{{ d.food_name.id }}">{{ d.food_name.food_name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <input class="amount" name="amount" type="number" placeholder="0.0" min="0.01" max="999.99" step="0.01" required></input>
+                        <button type="submit" class="add">add</button>
+                    </form>
+                </div>
+                <br>
+
+                <div class="section-title">Feeding Record</div>
+                {% for f in animal.animalfeedinglog_set.all %}
+                <div class="log-entry">
+                    <p class="section-text">Food: {{ f.food_name.food_name }}</p>
+                    <p class="section-text">Amount: {{ f.amount }}</p>
+                    <p class="section-text">Last Fed: {{ f.last_fed|date:"M d, Y g:i A" }}</p>
+                    <p class="section-text">Zookeeper: {{ f.zookeeper.user.first_name }}</p>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <!-- feed record(id) to be deleted -->
+                        <input type="hidden" name="action" value="delete_feed">
+                        <input type="hidden" name="feed_log_id" value="{{ f.id }}">
+                        <button type="submit" class="delete">delete</button>
+                    </form>
+                </div>
+                <br>
+                {% empty %}
+                <p>No Feeding Record</p>
+                {% endfor %}
+
+                <!-- Med Section -->
+                <div class="section-title">Add a New Medical Record</div>
+                <div class="log-entry">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="animal_id" value="{{ animal.id }}">
+                        <input type="hidden" name="action" value="add_med">
+
+                        <select name="medication_id" required>
+                            {% for m in medications %}
+                                <option value="{{ m.id }}">{{ m.medication_name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <input name="amount" type="number" placeholder="0.0" min="0.01" max="999.99" step="0.01" required></input>
+                        <button type="submit" class="add">add</button>
+                    </form>
+                </div>
+
+                <div class="section-title">Medical Records</div>
+                {% for m in animal.animalmedicationlog_set.all %}
+                <div class="log-entry">
+                    <p class="section-text">Date: {{ m.date|date:"M d, Y g:i A" }}</p>
+                    <p class="section-text">Medication: {{ m.medication.medication_name }}</p>
+                    <p class="section-text">Amount: {{ m.medication_amount }} mg</p>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <!-- medical record(id) to be deleted -->
+                        <input type="hidden" name="action" value="delete_med">
+                        <input type="hidden" name="med_log_id" value="{{ m.id }}">
+                        <button type="submit" class="delete">delete</button>
+                    </form>
+                </div>
+                <br>
+                {% empty %}
+                <p>No medical logs</p>
+                {% endfor %}
             </div>
-            <p class="animal-bio"><strong>Bio:</strong> Tiny, energetic mouse lemur rescued after a storm. Loves climbing anything he can grab.</p>
-            <div class="section-title">Diet (zootopia_diet)</div>
-            <p class="section-text">Omnivore – insects, tropical fruit, nectar.</p>
-            <div class="section-title">Food (zootopia_food)</div>
-            <p class="section-text">Insect &amp; fruit mix with vitamin-supplemented nectar.</p>
-            <div class="section-title">Feeding Log (zootopia_animalfeedinglog)</div>
-            <p class="section-text">Amount fed: 90 g per feeding</p>
-            <p class="section-text">Last fed: 2025-12-05 08:15</p>
-            <p class="section-text">Next feed: 2025-12-05 18:15</p>
-            <div class="section-title">Medication (zootopia_medication)</div>
-            <p class="section-text">Probiotic supplement for sensitive stomach.</p>
-            <div class="section-title">Medication Log (zootopia_animalmedicationlog)</div>
-            <p class="section-text">Dosage: 0.2 ml in nectar</p>
-            <p class="section-text">Last given: 2025-12-04 18:10</p>
-            <p class="section-text">Next due: 2025-12-05 18:10</p>
-            <div class="section-title">Fun Fact (zootopia_funfact)</div>
-            <p class="section-text fun-fact">Falls asleep curled around the very top branch like a tiny puffball.</p>
-        </div>
-
-        <!-- 2. King Julien -->
-        <div class="animal-card" id="animal-2">
-            <img src="{% static 'images/kingjulien.png' %}" alt="King Julien the lemur" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">2. King Julien</span>
-                <span class="animal-meta">ID: 2 • Lemur • Africa</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Sustained spinal damage in the wild; limited movement now, but a huge personality.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Mostly herbivore – leafy greens, sweet potatoes, fruit, primate biscuits.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Greens &amp; fruit bowl with biscuits for extra fiber.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: 250 g per feeding</p>
-            <p class="section-text">Last fed: 2025-12-05 09:00</p>
-            <p class="section-text">Next feed: 2025-12-05 17:30</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Meloxicam – chronic spinal pain management.</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Dosage: 0.4 mg in fruit puree</p>
-            <p class="section-text">Last given: 2025-12-05 08:55</p>
-            <p class="section-text">Next due: 2025-12-06 08:55</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">“Announces” breakfast the second he spots mango slices.</p>
-        </div>
-
-        <!-- 3. Leila -->
-        <div class="animal-card" id="animal-3">
-            <img src="{% static 'images/leila.jpeg' %}" alt="Leila the jaguar" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">3. Leila</span>
-                <span class="animal-meta">ID: 3 • Jaguar • South America</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Injured in a forest fire and fully recovered. Loves swimming in her pool.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Carnivore – whole prey (rabbit, poultry) and fish.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Whole rabbit with occasional fish enrichment.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: 3.5 kg/day (split)</p>
-            <p class="section-text">Last fed: 2025-12-05 07:45</p>
-            <p class="section-text">Next feed: 2025-12-05 16:30</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Omega-3 supplement – skin and coat support.</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Dosage: 1 capsule hidden in meat</p>
-            <p class="section-text">Last given: 2025-12-04 07:40</p>
-            <p class="section-text">Next due: 2025-12-06 07:40</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">Drags food to the water before eating, giving it a little “swim.”</p>
-        </div>
-
-        <!-- 4. Madison -->
-        <div class="animal-card" id="animal-4">
-            <img src="{% static 'images/madison-1.jpg.optimal.jpg' %}" alt="Madison the capybara" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">4. Madison</span>
-                <span class="animal-meta">ID: 4 • Capybara • South America</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Rescued from the illegal pet trade. Calm, social, and “big sister” of her group.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Herbivore – timothy hay, grasses, veggies, herbivore pellets.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Hay &amp; veggie mix with rodent herbivore pellets.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: 1.8 kg/day</p>
-            <p class="section-text">Last fed: 2025-12-05 08:30</p>
-            <p class="section-text">Next feed: 2025-12-05 18:30</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Vitamin C supplement – prevents deficiency.</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Dosage: 50 mg in water bowl</p>
-            <p class="section-text">Last given: 2025-12-05 07:55</p>
-            <p class="section-text">Next due: 2025-12-06 07:55</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">Loves napping half-submerged with just her nose above the water.</p>
-        </div>
-
-        <!-- 5. Rich -->
-        <div class="animal-card" id="animal-5">
-            <img src="{% static 'images/please work.jpg' %}" alt="Rich the alligator" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">5. Rich</span>
-                <span class="animal-meta">ID: 5 • American alligator • North America</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Outgrew a backyard pond. Very chill and usually floats with just his eyes showing.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Carnivore – whole fish, rats, poultry pieces.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Whole fish with occasional rat for enrichment.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: 4 kg every other day</p>
-            <p class="section-text">Last fed: 2025-12-04 15:00</p>
-            <p class="section-text">Next feed: 2025-12-06 15:00</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Dewormer – routine parasite control.</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Dosage: 20 mg injected into fish</p>
-            <p class="section-text">Last given: 2025-11-10 15:00</p>
-            <p class="section-text">Next due: 2026-02-10 15:00</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">Moves fastest for two things: food and the hose filling his pool.</p>
-        </div>
-
-        <!-- 6. Rick -->
-        <div class="animal-card" id="animal-6">
-            <img src="{% static 'images/rick.jpeg' %}" alt="Rick the garter snake" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">6. Rick</span>
-                <span class="animal-meta">ID: 6 • Garter snake • North America</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Rescued from garden netting. Curious and always exploring his habitat.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Carnivore – thawed fish and pinkie mice.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Small fish with occasional pinkie mouse reward.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: 2–3 fish per feeding</p>
-            <p class="section-text">Last fed: 2025-12-03 13:00</p>
-            <p class="section-text">Next feed: 2025-12-07 13:00</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Topical antiseptic (course completed).</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Last applied: 2025-11-20 10:30</p>
-            <p class="section-text">Next due: none – monitor only.</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">Likes to coil in his water dish so the reflection hides where he ends.</p>
-        </div>
-
-        <!-- 7. Max -->
-        <div class="animal-card" id="animal-7">
-            <img src="{% static 'images/max.jpg' %}" alt="Max the European badger" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">7. Max</span>
-                <span class="animal-meta">ID: 7 • European badger • Europe</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Rescued from a collapsed burrow. Shy at first, but playful once he trusts you.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Omnivore – insects, eggs, berries, soaked dog kibble.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Insect &amp; kibble mix with seasonal berries.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: 900 g per night</p>
-            <p class="section-text">Last fed: 2025-12-04 21:00</p>
-            <p class="section-text">Next feed: 2025-12-05 21:00</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Joint supplement chew – mild stiffness.</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Dosage: 1 chew in food</p>
-            <p class="section-text">Last given: 2025-12-04 20:55</p>
-            <p class="section-text">Next due: 2025-12-05 20:55</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">Rearranges his bedding every night, dragging in extra leaves.</p>
-        </div>
-
-        <!-- 8. Red -->
-        <div class="animal-card" id="animal-8">
-            <img src="{% static 'images/red.jpg' %}" alt="Red the fox" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">8. Red</span>
-                <span class="animal-meta">ID: 8 • Red fox • Europe</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Once had a leg injury that kept him from hunting; now one of the most curious animals.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Omnivore – rodents, chick pieces, berries, canine kibble.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Rodent &amp; kibble mix with scattered berries.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: 700 g per day</p>
-            <p class="section-text">Last fed: 2025-12-05 07:30</p>
-            <p class="section-text">Next feed: 2025-12-05 18:00</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Glucosamine – supports old leg injury.</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Dosage: 250 mg over food</p>
-            <p class="section-text">Last given: 2025-12-05 07:25</p>
-            <p class="section-text">Next due: 2025-12-06 07:25</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">Hides favorite food and “re-discovers” it later like buried treasure.</p>
-        </div>
-
-        <!-- 9. Tigress -->
-        <div class="animal-card" id="animal-9">
-            <img src="{% static 'images/tigress.jpg' %}" alt="Tigress the Bengal tiger" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">9. Tigress</span>
-                <span class="animal-meta">ID: 9 • Bengal tiger • Asia</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Rescued from a roadside zoo. Finally has room to roam and show off her power.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Carnivore – beef shanks, whole poultry, goat.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Rotating beef, poultry, and goat schedule.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: 6 kg per day</p>
-            <p class="section-text">Last fed: 2025-12-05 06:45</p>
-            <p class="section-text">Next feed: 2025-12-06 06:45</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Monthly flea &amp; tick preventative.</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Last applied: 2025-11-30 10:00</p>
-            <p class="section-text">Next due: 2025-12-30 10:00</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">Obsessed with cardboard boxes—keepers schedule “box day” enrichment.</p>
-        </div>
-
-        <!-- 10. BigBack -->
-        <div class="animal-card" id="animal-10">
-            <img src="{% static 'images/Bigback.png' %}" alt="BigBack the elephant" class="animal-photo">
-            <div class="animal-header">
-                <span class="animal-name">10. BigBack</span>
-                <span class="animal-meta">ID: 10 • Asian elephant • Asia</span>
-            </div>
-            <p class="animal-bio"><strong>Bio:</strong> Former logging elephant, now gentle and playful. Loves splashing his keepers.</p>
-            <div class="section-title">Diet</div>
-            <p class="section-text">Herbivore – hay, branches, bamboo, apples, bananas, carrots.</p>
-            <div class="section-title">Food</div>
-            <p class="section-text">Hay &amp; browse with produce mix treats.</p>
-            <div class="section-title">Feeding Log</div>
-            <p class="section-text">Amount fed: ~120 kg per day (multiple feedings)</p>
-            <p class="section-text">Last fed: 2025-12-05 10:00</p>
-            <p class="section-text">Next feed: 2025-12-05 14:00</p>
-            <div class="section-title">Medication</div>
-            <p class="section-text">Anti-inflammatory + Epsom salt foot soaks.</p>
-            <div class="section-title">Medication Log</div>
-            <p class="section-text">Oral last given: 2025-12-05 09:45 (next: 2025-12-06 09:45)</p>
-            <p class="section-text">Soak last done: 2025-12-03 11:30 (next: 2025-12-06 11:30)</p>
-            <div class="section-title">Fun Fact</div>
-            <p class="section-text fun-fact">Taps the ground with his trunk before stepping into new areas.</p>
-        </div>
-
+        {% endfor %}
     </div>
 </div>
 
