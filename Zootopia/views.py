@@ -1,8 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
-from Zootopia.models import Animal, User
+from Zootopia.models import Animal, User, AnimalMedicationLog, AnimalFeedingLog, Medication, Zookeeper
 
 # Create your views here.
 class HomePage(View):
@@ -18,11 +19,90 @@ class AnimalPage(View):
     def get(self, request):
         return render(request, 'animal.html')
 
-class ZooKeeper(View):
+"""
+ZooKeeper page requires an authenticated user with is_zookeeper permission
+- if not logged in -> redirect to login page
+- if not zookeeper -> redirect to animals page
+yall can change the logic if you want!!!
+"""
+class ZooKeeper(LoginRequiredMixin, View):
+    login_url = "/login/"
+    redirect_field_name = "redirect_to"
     def get(self, request):
-        return render(request, 'zookeeper.html')
+        if not request.user.is_zookeeper:
+            return redirect('animals')
+
+        """
+        - we are grouping by animal 
+        - so we need the reverse relationship for each related table -> use _set
+        - there can be MANY records for each animal -> use prefetch_related for many-relationship
+        """
+
+        animals = Animal.objects.all().prefetch_related(
+            'diet_set',
+            'animalfeedinglog_set',
+            'animalfeedinglog_set',
+            'animalmedicationlog_set'
+        )
+        # no direct relationship to animals, but we need it for selecting the options for a new medical record
+        medications = Medication.objects.all()
+
+        context = {
+            'animals': animals,
+            'medications': medications
+        }
+        return render(request, 'zookeeper.html', context)
+
     def post(self, request):
-        pass
+        # TO-DO:
+        #   - implement edit function
+        #   - messages...
+        #   - If time permits -> add/delete/edit for Location, Animal, Food, Medication, and Diet
+        # action - current working functionality: add & delete on medication records & feeding records
+        # for deletion: we have direct access the two log ids -> don't have to use composite key search for unique log
+        action = request.POST.get('action')
+        animal_id = request.POST.get('animal_id')
+        zookeeper = Zookeeper.objects.get(user=request.user) # only zookeepers can access this page -> just directly get the user
+
+        # add medical record
+        if action == 'add_med':
+            medication_id = request.POST.get('medication_id')
+            # number validation & min-max validation implemented inside the forms input
+            amount = request.POST.get('amount')
+            # date field is auto-generated & already configurated in settings to match our timezone
+            AnimalMedicationLog.objects.create(
+                animal_id=animal_id,
+                medication_id=medication_id,
+                medication_amount=amount
+            )
+
+        # delete medical record
+        elif action == 'delete_med':
+            med_log_id = request.POST.get('med_log_id')
+            med_log = AnimalMedicationLog.objects.get(id=med_log_id).delete()
+
+        # TO-DO: edit medical record
+
+        # add feeding record
+        elif action == 'add_feed':
+            food_id = request.POST.get('food_id')
+            amount = request.POST.get('amount')
+
+            AnimalFeedingLog.objects.create(
+                animal_id=animal_id,
+                food_name_id=food_id,
+                amount=amount,
+                zookeeper=zookeeper
+            )
+
+        # delete feeding record
+        elif action == 'delete_feed':
+            feed_log_id = request.POST.get('feed_log_id')
+            feed_log = AnimalFeedingLog.objects.get(id=feed_log_id).delete()
+
+        # TO-DO: edit feeding record
+
+        return redirect('zookeeper')
 
 class Login(View):
     def get(self, request):
