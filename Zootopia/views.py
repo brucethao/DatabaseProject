@@ -3,7 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
-from Zootopia.models import Animal, User, AnimalMedicationLog, AnimalFeedingLog, Medication, Zookeeper
+from Zootopia.models import Animal, User, AnimalMedicationLog, AnimalFeedingLog, Medication, Zookeeper, Food
+
 
 # Create your views here.
 class HomePage(View):
@@ -81,7 +82,18 @@ class ZooKeeper(LoginRequiredMixin, View):
             med_log_id = request.POST.get('med_log_id')
             med_log = AnimalMedicationLog.objects.get(id=med_log_id).delete()
 
-        # TO-DO: edit medical record
+        # edit medical record
+        elif action == 'edit_med':
+            med_log_id = request.POST.get('med_log_id')
+            medication_id = request.POST.get('medication_id')
+            amount = request.POST.get('amount')
+            med_log = AnimalMedicationLog.objects.get(id=med_log_id)
+
+            # directly assign the fkey stored as medication_id in database, NOT medication (in the models)
+            # otherwise you would need to grab the actual medication object and assign med_log.medication = medication
+            med_log.medication_id=medication_id
+            med_log.medication_amount=amount
+            med_log.save()
 
         # add feeding record
         elif action == 'add_feed':
@@ -100,7 +112,17 @@ class ZooKeeper(LoginRequiredMixin, View):
             feed_log_id = request.POST.get('feed_log_id')
             feed_log = AnimalFeedingLog.objects.get(id=feed_log_id).delete()
 
-        # TO-DO: edit feeding record
+        # edit feeding record
+        elif action == 'edit_feed':
+            feed_log_id = request.POST.get('feed_log_id')
+            food_id = request.POST.get('food_id')
+            amount = request.POST.get('amount')
+            food_log = AnimalFeedingLog.objects.get(id=feed_log_id)
+
+            # directly assign the fkey stored as food_name_id in database, NOT food_name (in the models)
+            food_log.food_name_id=food_id
+            food_log.amount=amount
+            food_log.save()
 
         return redirect('zookeeper')
 
