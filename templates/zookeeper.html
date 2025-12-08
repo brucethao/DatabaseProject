@@ -65,7 +65,7 @@
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 0 6px #cccccc;
-            padding: 10px 12px 12px;
+            padding: 10px 12px 12px 5px;
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -100,26 +100,27 @@
         }
 
         .section-title {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             color: #2d5a27;
             margin: 4px 0 2px;
         }
 
         .section-text {
-            font-size: 11px;
+            font-size:11px;
             margin: 0 0 4px;
         }
 
         .log-entry {
-            border-top: 1px solid grey;
+            border-top: 1.5px solid grey;
             padding: 5px;
+            border-color: #2F4F4F;
         }
         .add {
             width: 50px;
             heigh: 75px;
             border-radius: 5px;
-            background-color: #2a5d3b;
+            background-color: #6082B6;
             color: white;
         }
         .edit {
@@ -142,6 +143,16 @@
             margin: 8px 0;
             border-radius: 5px;
             border: 1px solid #ccc;
+        }
+        #edit-food-border.section-text, #delete-food-border.section-text, #edit-med-border.section-text, #delete-med-border.section-text {
+            border-top: 1.6px solid grey;
+            border-left: none !important;
+            border-right: none !important;
+            border-bottom: none !important;
+            border-style: dashed;
+            border-color: #2F4F4F;
+            padding-top: 10px;
+            padding-bottom: 7px;
         }
     </style>
 </head>
@@ -189,8 +200,9 @@
                 <div class="diet-section">
                     <div class="section-title">Zoo diet</div>
                     <p class="section-text">
+                        A combination of
                         {% for d in animal.diet_set.all %}
-                            {{ d.food_name.food_name }}{% if not forloop.last %}, {% else %}. {% endif %}
+                            {% if forloop.last %} and {% endif %} {{ d.food_name.food_name }}{% if not forloop.last %}, {% else %}. {% endif %}
                         {% endfor %}
                     </p>
                 </div>
@@ -219,11 +231,34 @@
                 <div class="section-title">Feeding Record</div>
                 {% for f in animal.animalfeedinglog_set.all %}
                 <div class="log-entry">
+                    <p class="section-text"><strong>Record #{{ forloop.counter }}</strong></p>
                     <p class="section-text">Food: {{ f.food_name.food_name }}</p>
                     <p class="section-text">Amount: {{ f.amount }}</p>
                     <p class="section-text">Last Fed: {{ f.last_fed|date:"M d, Y g:i A" }}</p>
                     <p class="section-text">Zookeeper: {{ f.zookeeper.user.first_name }}</p>
 
+                    <p id="edit-food-border" class="section-text" style="font-weight: 600;">Edit Record</p>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <p>
+                            <select name="food_id" required>
+                                <!-- set default to the original value & remove that option from the generated loop -->
+                                <option value="{{ f.food_name.id }}"> {{ f.food_name.food_name }} </option>
+                                {% for d in animal.diet_set.all %}
+                                    {% if d.food_name.id != f.food_name.id %}
+                                        <option value="{{ d.food_name.id }}" >{{ d.food_name.food_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+
+                        <input class="amount" name="amount" type="number" placeholder="{{ f.amount }}" min="0.01" max="999.99" step="0.01" required>
+                        <input type="hidden" name="action" value="edit_feed">
+                        <input type="hidden" name="feed_log_id" value="{{ f.id }}">
+                        <button type="submit" class="edit">edit</button>
+                        </p>
+                    </form>
+
+                    <p id="delete-food-border" class="section-text" style="font-weight: 600;">Delete Record</p>
                     <form method="POST">
                         {% csrf_token %}
                         <!-- feed record(id) to be deleted -->
@@ -259,10 +294,33 @@
                 <div class="section-title">Medical Records</div>
                 {% for m in animal.animalmedicationlog_set.all %}
                 <div class="log-entry">
+                    <p class="section-text"><strong>Med Record #{{ forloop.counter }}</strong></p>
                     <p class="section-text">Date: {{ m.date|date:"M d, Y g:i A" }}</p>
                     <p class="section-text">Medication: {{ m.medication.medication_name }}</p>
                     <p class="section-text">Amount: {{ m.medication_amount }} mg</p>
 
+                    <p id="edit-med-border" class="section-text" style="font-weight: 600;">Edit Record</p>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <p>
+                            <select name="medication_id" required>
+                                <!-- set default to the original value & remove that option from the generated options -->
+                                <option value="{{ m.medication.id }}"> {{ m.medication.medication_name }} </option>
+                                {% for med in medications %}
+                                    {% if med.id != m.medication.id %}
+                                        <option value="{{ med.id }}" >{{ med.medication_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+
+                            <input class="amount" name="amount" type="number" placeholder="{{ m.medication_amount }}" min="0.01" max="999.99" step="0.01" required>
+                            <input type="hidden" name="action" value="edit_med">
+                            <input type="hidden" name="med_log_id" value="{{ m.id }}">
+                            <button type="submit" class="edit">edit</button>
+                        </p>
+                    </form>
+
+                    <p id="delete-med-border" class="section-text" style="font-weight: 600;">Delete Record
                     <form method="POST">
                         {% csrf_token %}
                         <!-- medical record(id) to be deleted -->
@@ -270,6 +328,7 @@
                         <input type="hidden" name="med_log_id" value="{{ m.id }}">
                         <button type="submit" class="delete">delete</button>
                     </form>
+                    </p>
                 </div>
                 <br>
                 {% empty %}
