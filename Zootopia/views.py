@@ -9,12 +9,7 @@ from Zootopia.models import Animal, User, AnimalMedicationLog, AnimalFeedingLog,
 # Create your views here.
 class HomePage(View):
     def get(self, request):
-        try:
-            user = request.user.first_name
-            context = {"user": user}
-        except AttributeError:
-            return render(request, 'homepage.html')
-        return render(request, 'homepage.html', context)
+        return render(request, 'homepage.html')
 
 class AnimalPage(View):
     def get(self, request):
@@ -31,6 +26,7 @@ class ZooKeeper(LoginRequiredMixin, View):
     redirect_field_name = "redirect_to"
     def get(self, request):
         if not request.user.is_zookeeper:
+            messages.error(request, "Only zookeepers have access to the Zookeepers page.")
             return redirect('animals')
 
         """
@@ -129,6 +125,7 @@ class ZooKeeper(LoginRequiredMixin, View):
 class Login(View):
     def get(self, request):
         return render(request, 'login.html')
+
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -158,18 +155,22 @@ class Register(View):
         return render(request, 'register.html')
     def post(self, request):
         username = request.POST.get('username')
-        password = request.POST.get('password')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
         email = request.POST.get('email')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
 
         if User.objects.filter(username=username).exists():
             messages.info(request, 'Username already exists. Please login or register a different user.')
-            return render(request, 'homepage.html')
+            return redirect('register')
+        elif password1 != password2:
+            messages.info(request, 'Passwords do not match. Please try again.')
+            return redirect('register')
         else:
             user = User.objects.create_user(
                 username=username,
-                password=password,
+                password=password2,
                 email=email,
                 first_name=first_name,
                 last_name=last_name
