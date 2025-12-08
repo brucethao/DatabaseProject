@@ -107,11 +107,19 @@
     </style>
 </head>
 <body>
+    <!-- registration messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {{ message.tags }}" style="text-align: center;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
 <div class="register-box">
     <h2>Create Account</h2>
 
-    <form action="#" method="post">
+    <form action="{% url 'register' %}" method="post">
         {% csrf_token %}
 
         <div class="input-group">
