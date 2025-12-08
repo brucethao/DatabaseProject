@@ -79,7 +79,7 @@ DATABASES = {
        'ENGINE': 'django.db.backends.mysql',
        'NAME': 'zoomanagement',
        'USER': 'root',
-       'PASSWORD': 'cs557Project!',
+       'PASSWORD': 'lol123',
        'HOST': 'localhost',
        'PORT': '3306',
    }

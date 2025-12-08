@@ -1,3 +1,5 @@
+from contextlib import nullcontext
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
@@ -8,7 +10,7 @@ from Zootopia.models import Animal, User
 class HomePage(View):
     def get(self, request):
         try:
-            user = request.user.first_name
+            user = request.User.first_name
             context = {"user": user}
         except AttributeError:
             return render(request, 'homepage.html')
@@ -17,6 +19,14 @@ class HomePage(View):
 class AnimalPage(View):
     def get(self, request):
         return render(request, 'animal.html')
+
+class Region(View):
+    def get(self, request, region):
+        animals = Animal.objects.filter(animal_habitat__continent = region)
+        animals = animals.select_related('animal_habitat')
+
+        context = {"animals": animals, "region": region}
+        return render(request, 'regions.html', context)
 
 class ZooKeeper(View):
     def get(self, request):

@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from Zootopia.models import Animal
-from Zootopia.views import HomePage, Login, Register, ZooKeeper, AnimalPage, Logout, VisitUs
+from Zootopia.views import HomePage, Login, Register, ZooKeeper, AnimalPage, Region, Logout, VisitUs
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +27,7 @@ urlpatterns = [
     path('register/', Register.as_view(), name='register'),
     path('zoo/', ZooKeeper.as_view(), name='zookeeper'),
     path('animals/', AnimalPage.as_view(), name='animals'),
+    path('animals/<str:region>/', Region.as_view(), name='region'),
     path('logout/', Logout.as_view(), name='logout'),
     path('register/', Register.as_view(), name='register'),
     path('visitus/', VisitUs.as_view(), name='visitus'),

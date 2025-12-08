@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Welcome to Lakeside Zoo{% endblock %}
+{% block title %}Animals{% endblock %}
 
 {% block content %}
     <main class="container">
@@ -11,5 +11,16 @@
                 Here at Lakeside Zoo, our mission is rescue and inhabit animals from around the world to ensure
                 that. Below you can explore the animals that are currently inhabiting the Lakeside Zoo.
         </section>
+    <section class="regions"></section>
+    <h1>
+        Explore the animals from around the world
+    </h1>
+        <a href="{% url 'region' 'Africa' %}" class="button">Africa</a>
+        <a href="{% url 'region' 'Antarctica' %}" class="button">Antarctica</a>
+        <a href="{% url 'region' 'Asia' %}" class="button">Asia</a>
+        <a href="{% url 'region' 'Australia' %}" class="button">Australia</a>
+        <a href="{% url 'region' 'Europe' %}" class="button">Europe</a>
+        <a href="{% url 'region' 'North America' %}" class="button">North America</a>
+        <a href="{% url 'region' 'South America' %}" class="button">South America</a>
     </main>
 {% endblock %}

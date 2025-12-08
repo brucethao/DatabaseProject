@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} Animals of {{ region }}{% endblock %}
+
+{% block content %}
+    <div class="animal-grid">
+        {% for animal in animals %}
+            <div class="animal-card">
+                <h3>{{ animal.name }}</h3>
+                <h4>{{ animal.animal_habitat.habitat }}</h4>
+                <p>Species: {{ animal.species }}</p>
+            </div>
+    {% empty %}
+        <p>No animals from this region at the moment! D:</p>
+    {% endfor %}
+    </div>
+{% endblock %}
