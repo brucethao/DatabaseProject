@@ -73,9 +73,9 @@ class Register(View):
 
         if User.objects.filter(username=username).exists():
             messages.info(request, 'Username already exists. Please login or register a different user.')
-            return render(request, 'homepage.html')
+            return render(request, 'register.html')
         else:
-            user = User.objects.create_user(
+                User.objects.create_user(
                 username=username,
                 password=password,
                 email=email,

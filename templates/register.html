@@ -112,9 +112,17 @@
     <h2>Create Account</h2>
 
     <form action="#" method="post">
-        <!-- Django Users: {% csrf_token %} -->
+        {% csrf_token %}
 
         <div class="input-group">
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: red; font-weight: bold; text-align: center;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+
             <label for="id_firstname">First Name</label>
             <input type="text" id="id_firstname" name="first_name" placeholder="Enter your first name">
         </div>
@@ -136,12 +144,12 @@
 
         <div class="input-group">
             <label for="id_password1">Password</label>
-            <input type="password" id="id_password1" name="password1" placeholder="Create a password">
+            <input type="password" id="id_password1" name="password" placeholder="Create a password">
         </div>
 
         <div class="input-group">
             <label for="id_password2">Confirm Password</label>
-            <input type="password" id="id_password2" name="password2" placeholder="Confirm password">
+            <input type="password" id="id_password2" name="password1" placeholder="Confirm password">
         </div>
 
         <button type="submit" class="register-btn">Register</button>
