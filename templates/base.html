@@ -13,7 +13,9 @@
             <nav>
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'animals' %}">Animals</a>
-                <a href="{% url 'zookeeper' %}">Zookeeper Dashboard</a>
+                {% if user.is_zookeeper %}
+                    <a href="{% url 'zookeeper' %}">Zookeeper Dashboard</a>
+                {% endif %}
                 {% if user.is_staff %}
                     <a href="{% url 'admin:index' %}">Staff Dashboard</a>
                 {% endif %}
