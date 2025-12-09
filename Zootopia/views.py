@@ -1,16 +1,16 @@
-from contextlib import nullcontext
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
-from Zootopia.models import Animal, User
+from Zootopia.models import Animal, User, AnimalMedicationLog, AnimalFeedingLog, Medication, Zookeeper, Food
+
 
 # Create your views here.
 class HomePage(View):
     def get(self, request):
         try:
-            user = request.User.first_name
+            user = request.user.first_name
             context = {"user": user}
         except AttributeError:
             return render(request, 'homepage.html')
@@ -28,9 +28,44 @@ class Region(View):
         context = {"animals": animals, "region": region}
         return render(request, 'regions.html', context)
 
+
+"""
+ZooKeeper page requires an authenticated user with is_zookeeper permission
+- if not logged in -> redirect to login page
+- if not zookeeper -> redirect to animals page
+yall can change the logic if you want!!!
+"""
+class ZooKeeper(LoginRequiredMixin, View):
+    login_url = "/login/"
+    redirect_field_name = "redirect_to"
+
 class ZooKeeper(View):
     def get(self, request):
-        return render(request, 'zookeeper.html')
+        if not request.user.is_zookeeper:
+            messages.error(request, "Only zookeepers have access to the Zookeepers page.")
+            return redirect('animals')
+
+        """
+        - we are grouping by animal 
+        - so we need the reverse relationship for each related table -> use _set
+        - there can be MANY records for each animal -> use prefetch_related for many-relationship
+        """
+
+        animals = Animal.objects.all().prefetch_related(
+            'diet_set',
+            'animalfeedinglog_set',
+            'animalfeedinglog_set',
+            'animalmedicationlog_set'
+        )
+        # no direct relationship to animals, but we need it for selecting the options for a new medical record
+        medications = Medication.objects.all()
+
+        context = {
+            'animals': animals,
+            'medications': medications
+        }
+        return render(request, 'zookeeper.html', context)
+
     def post(self, request):
         pass
 
@@ -66,18 +101,22 @@ class Register(View):
         return render(request, 'register.html')
     def post(self, request):
         username = request.POST.get('username')
-        password = request.POST.get('password')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
         email = request.POST.get('email')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
 
         if User.objects.filter(username=username).exists():
             messages.info(request, 'Username already exists. Please login or register a different user.')
-            return render(request, 'register.html')
+            return redirect('register')
+        elif password1 != password2:
+            messages.info(request, 'Passwords do not match. Please try again.')
+            return redirect('register')
         else:
                 User.objects.create_user(
                 username=username,
-                password=password,
+                password=password2,
                 email=email,
                 first_name=first_name,
                 last_name=last_name

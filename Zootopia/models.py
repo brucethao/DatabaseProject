@@ -11,6 +11,27 @@ from django.dispatch import receiver
 # while using its authentication system in addition to our own fields
 class User(AbstractUser):
     is_zookeeper = models.BooleanField(default = False)
+#Ensures that zookeeper object is created when a user is created to be a zookeeper
+    #Also deletes zookeeper object when user is removed as a zookeeper
+
+class Zookeeper(models.Model):
+    wage = models.DecimalField(max_digits = 5, decimal_places = 2, default = 7.50)
+    hours = models.DecimalField(max_digits = 5, decimal_places = 2, default = 8)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
+
+@receiver(post_save, sender=User)
+def sync_zookeeper_profile(sender, instance, created, **kwargs):
+    if instance.is_zookeeper:
+        # get_or_create prevents crashing if the profile already exists
+        Zookeeper.objects.get_or_create(user=instance)
+    else:
+        # If they are NOT a zookeeper, find their profile and delete it
+        Zookeeper.objects.filter(user=instance).delete()
+
+@receiver(post_delete, sender=Zookeeper)
+def remove_zookeeper_flag(sender, instance, **kwargs):
+    # Updates the database with users that are not zookeepers ensuring the boolean field is false
+    User.objects.filter(id=instance.user_id).update(is_zookeeper=False)
 
 class Location(models.Model):
     continent = models.CharField(max_length = 100)
@@ -39,12 +60,6 @@ class Animal(models.Model):
     classification = models.ForeignKey(Classification, on_delete = models.CASCADE)
     animal_habitat = models.ForeignKey(Location, on_delete = models.CASCADE)
 #Cannot add more than 3 digits before decimal point. - FIXED!
-
-
-class Zookeeper(models.Model):
-    wage = models.DecimalField(max_digits = 5, decimal_places = 2, default = 7.50)
-    hours = models.DecimalField(max_digits = 5, decimal_places = 2, default = 8)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
 
 class Food(models.Model):
     food_name = models.CharField(max_length = 100)
@@ -87,20 +102,3 @@ class Show(models.Model):
 class Product(models.Model):
     item_name = models.CharField(max_length = 100)
     price = models.DecimalField(max_digits = 5, decimal_places = 2)
-
-
-    #Ensures that zookeeper object is created when a user is created to be a zookeeper
-    #Also deletes zookeeper object when user is removed as a zookeeper
-    @receiver(post_save, sender=User)
-    def sync_zookeeper_profile(sender, instance, created, **kwargs):
-        if instance.is_zookeeper:
-            # get_or_create prevents crashing if the profile already exists
-            Zookeeper.objects.get_or_create(user=instance)
-        else:
-            # If they are NOT a zookeeper, find their profile and delete it
-            Zookeeper.objects.filter(user=instance).delete()
-
-    @receiver(post_delete, sender=Zookeeper)
-    def remove_zookeeper_flag(sender, instance, **kwargs):
-        # Updates the database with users that are not zookeepers ensuring the boolean field is false
-        User.objects.filter(id=instance.user_id).update(is_zookeeper=False)

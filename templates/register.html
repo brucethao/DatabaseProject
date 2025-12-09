@@ -111,7 +111,7 @@
 <div class="register-box">
     <h2>Create Account</h2>
 
-    <form action="#" method="post">
+    <form action="{% url 'register' %}" method="post">
         {% csrf_token %}
 
         <div class="input-group">
@@ -144,19 +144,19 @@
 
         <div class="input-group">
             <label for="id_password1">Password</label>
-            <input type="password" id="id_password1" name="password" placeholder="Create a password">
+            <input type="password" id="id_password1" name="password1" placeholder="Create a password">
         </div>
 
         <div class="input-group">
             <label for="id_password2">Confirm Password</label>
-            <input type="password" id="id_password2" name="password1" placeholder="Confirm password">
+            <input type="password" id="id_password2" name="password2" placeholder="Confirm password">
         </div>
 
         <button type="submit" class="register-btn">Register</button>
     </form>
 
     <div class="links">
-        Already have an account? <a href="{% url 'login' %}">Log in</a>
+        Already have an account? <a href="login.html">Log in</a>
     </div>
 </div>
 
