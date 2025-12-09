@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from Zootopia.models import Animal
-from Zootopia.views import HomePage, Login, Register, ZooKeeper, AnimalPage, Logout, VisitUs
+from Zootopia.views import HomePage, Login, Register, ZooKeeper, AnimalPage, Logout, VisitUs, Reset
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +30,5 @@ urlpatterns = [
     path('logout/', Logout.as_view(), name='logout'),
     path('register/', Register.as_view(), name='register'),
     path('visitus/', VisitUs.as_view(), name='visitus'),
+    path('reset/', Reset.as_view(), name='reset'),
 ]
