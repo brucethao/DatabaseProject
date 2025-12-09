@@ -13,7 +13,10 @@
             <nav>
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'animals' %}">Animals</a>
-                <a href="{% url 'zookeeper' %}">For Zookeepers</a>
+                <a href="{% url 'zookeeper' %}">Zookeeper Dashboard</a>
+                {% if user.is_staff %}
+                    <a href="{% url 'admin:index' %}">Staff Dashboard</a>
+                {% endif %}
 
                 {% if user.is_authenticated %}
                     <span style="color: white; margin-left: 16px;">Welcome, {{ user.first_name }}</span>
