@@ -13,10 +13,9 @@
             <nav>
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'animals' %}">Animals</a>
-                <a href="{% url 'zookeeper' %}">For Zookeepers</a>
 
                 {% if user.is_authenticated %}
-                    <span style="color: white; margin-left: 16px;">Welcome, {{ user.first_name }}</span>
+                    <a href ="{% url 'dashboard' user.first_name %}" style="color: white; margin-left: 16px;">Welcome, {{ user.first_name }}</a>
                     <a href="{% url 'logout' %}">Logout</a>
                 {% else %}
                     <a href="{% url 'login' %}">Login</a>

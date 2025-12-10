@@ -18,14 +18,14 @@ from django.contrib import admin
 from django.urls import path
 
 from Zootopia.models import Animal
-from Zootopia.views import HomePage, Login, Register, ZooKeeper, AnimalPage, Region, Logout, VisitUs
+from Zootopia.views import HomePage, Login, Register,    AnimalPage, Region, Logout, VisitUs, Dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomePage.as_view(), name='home'),
     path('login/', Login.as_view(), name='login'),
     path('register/', Register.as_view(), name='register'),
-    path('zoo/', ZooKeeper.as_view(), name='zookeeper'),
+    path("<str:name>'s_dashboard/", Dashboard.as_view(), name='dashboard'),
     path('animals/', AnimalPage.as_view(), name='animals'),
     path('animals/<str:region>/', Region.as_view(), name='region'),
     path('logout/', Logout.as_view(), name='logout'),

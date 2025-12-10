@@ -9,12 +9,7 @@ from Zootopia.models import Animal, User, AnimalMedicationLog, AnimalFeedingLog,
 # Create your views here.
 class HomePage(View):
     def get(self, request):
-        try:
-            user = request.user.first_name
-            context = {"user": user}
-        except AttributeError:
-            return render(request, 'homepage.html')
-        return render(request, 'homepage.html', context)
+        return render(request, 'homepage.html')
 
 class AnimalPage(View):
     def get(self, request):
@@ -35,11 +30,16 @@ ZooKeeper page requires an authenticated user with is_zookeeper permission
 - if not zookeeper -> redirect to animals page
 yall can change the logic if you want!!!
 """
-class ZooKeeper(LoginRequiredMixin, View):
-    login_url = "/login/"
-    redirect_field_name = "redirect_to"
+class Dashboard(View):
+    def get(self, request, name):
+        user = request.user
+        if not user.is_authenticated:
+            return redirect('login')
+        name = request.user.first_name
+        context = {"name": name}
+        return render(request, 'dashboard.html', context)
 
-class ZooKeeper(View):
+class ZooKeeperDashboard(View):
     def get(self, request):
         if not request.user.is_zookeeper:
             messages.error(request, "Only zookeepers have access to the Zookeepers page.")
@@ -64,7 +64,7 @@ class ZooKeeper(View):
             'animals': animals,
             'medications': medications
         }
-        return render(request, 'zookeeper.html', context)
+        return render(request, 'zookeeperDash.html', context)
 
     def post(self, request):
         pass

@@ -12,7 +12,7 @@
                 <p class="hero-subtitle">
                     Ready to do zookeeper type shi?
                 </p>
-            {% elif user.is_authenticated %}
+            {% elif user.is_authenticated and user.first_name %}
                 <h1 class="hero-title">Welcome, {{ user.first_name }}</h1>
                 <p class="hero-subtitle">
                     Check out some of the animals idiot!
