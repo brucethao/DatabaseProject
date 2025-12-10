@@ -74,6 +74,7 @@ class AnimalFeedingLog(models.Model):
     amount = models.DecimalField(max_digits = 5, decimal_places = 2)
     last_fed = models.DateTimeField(auto_now_add = True)
     zookeeper = models.ForeignKey(Zookeeper, on_delete = models.CASCADE)
+
 # to do
 class Medication(models.Model):
     medication_name = models.CharField(max_length = 100)
