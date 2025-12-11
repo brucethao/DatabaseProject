@@ -1,8 +1,73 @@
 {% extends 'base.html' %}
 
-{% block title %}Welcome to Lakeside Zoo{% endblock %}
+{% block title %}{{ user.first_name }}'s Dashboard{% endblock %}
 
-<p>penis</p>
 {% block content %}
 
-{%  endblock %}
+<style>
+    .dashboard-container {
+        max-width: 800px;
+        margin: 50px auto;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .dashboard-header {
+        color: #2d5a27;
+        margin-bottom: 40px;
+    }
+
+    .button-grid {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .dash-btn {
+        display: inline-block;
+        width: 200px;
+        padding: 30px 20px;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 18px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-profile {
+        background-color: #2d5a27;
+        color: white;
+        border: 2px solid #2d5a27;
+    }
+
+    /* 2. Zookeeper Button (Gold/Admin Theme) */
+    .btn-keeper {
+        background-color: #f0ad4e; /* Warning/Admin Color */
+        color: white;
+        border: 2px solid #eea236;
+    }
+
+    .btn-keeper:hover {
+        background-color: #ec971f;
+    }
+</style>
+
+<div class="dashboard-container">
+    <h1 class="dashboard-header">Welcome, {{ user.first_name }}</h1>
+
+    <div class="button-grid">
+        <a href="{% url 'profile' user.first_name %}" class="dash-btn btn-profile">
+            Profile Details
+        </a>
+
+        {% if user.is_zookeeper %}
+            <a href="{% url 'zooDashboard' user.first_name %}" class="dash-btn btn-keeper">
+                Zookeeper Panel
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

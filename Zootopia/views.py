@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from Zootopia.models import Animal, User, AnimalMedicationLog, AnimalFeedingLog, Medication, Zookeeper, Food
 
@@ -23,6 +22,23 @@ class Region(View):
         context = {"animals": animals, "region": region}
         return render(request, 'regions.html', context)
 
+class AnimalPageDetails(View):
+    def get(self, request, region, name):
+        selected_animal = get_object_or_404(
+            Animal,
+            name=name,
+            animal_habitat__continent=region
+        )
+
+        # 2. CONTEXT
+        context = {
+            'animal': selected_animal,
+            'region': region,
+        }
+
+        # 3. RENDER
+        return render(request, 'animal_page.html', context)
+
 
 """
 ZooKeeper page requires an authenticated user with is_zookeeper permission
@@ -39,8 +55,55 @@ class Dashboard(View):
         context = {"name": name}
         return render(request, 'dashboard.html', context)
 
+
+from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+
+
+class Profile(View):
+    def get(self, request, name):
+        # 1. Your Manual Auth Check
+        user = request.user
+        if not user.is_authenticated:
+            return redirect('login')
+
+        return render(request, 'profile.html')
+
+    def post(self, request, name):
+        # 1. Your Manual Auth Check
+        user = request.user
+        if not user.is_authenticated:
+            return redirect('login')
+
+        # 2. Update Basic Info
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+
+        old_pass = request.POST.get('old_password')
+        new_pass = request.POST.get('new_password')
+
+        if old_pass and new_pass:
+            if user.check_password(old_pass):
+                user.set_password(new_pass)
+                user.save()
+                # Keep them logged in after password change
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Password and Profile updated!')
+            else:
+                messages.error(request, 'Old password was incorrect.')
+                return render(request, 'profile.html')
+
+        user.save()
+        messages.success(request, 'Profile updated successfully!')
+
+        # Redirect back to the Profile View
+        return redirect('profile', name=user.first_name)
+
 class ZooKeeperDashboard(View):
-    def get(self, request):
+    def get(self, request, name):
         if not request.user.is_zookeeper:
             messages.error(request, "Only zookeepers have access to the Zookeepers page.")
             return redirect('animals')

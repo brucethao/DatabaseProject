@@ -3,15 +3,53 @@
 {% block title %} Animals of {{ region }}{% endblock %}
 
 {% block content %}
-    <div class="animal-grid">
-        {% for animal in animals %}
+
+<style>
+    /* ... (Keep your existing CSS exactly the same) ... */
+    .animal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+        padding: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .animal-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+        transition: transform 0.2s, box-shadow 0.2s;
+        /* Make sure the card fills the anchor tag height */
+        height: 100%;
+        box-sizing: border-box;
+    }
+    /* ... (Rest of your CSS) ... */
+</style>
+
+<h1 style="text-align: center; margin-top: 40px; color: #2d5a27;">
+    Animals of {{ region }}
+</h1>
+
+<div class="animal-grid">
+    {% for animal in animals %}
+        <a href="{% url 'animalpagedetails' region animal.name %}" style="text-decoration: none; color: inherit; display: block;">
+
             <div class="animal-card">
                 <h3>{{ animal.name }}</h3>
                 <h4>{{ animal.animal_habitat.habitat }}</h4>
-                <p>Species: {{ animal.species }}</p>
+                <p><strong>Species:</strong> {{ animal.species }}</p>
             </div>
+
+        </a>
     {% empty %}
-        <p>No animals from this region at the moment! D:</p>
+        <div class="empty-message">
+            <p>No animals from this region at the moment! D:</p>
+            <a href="{% url 'animals' %}" style="color: #2d5a27; font-weight: bold;">Return to Map</a>
+        </div>
     {% endfor %}
-    </div>
+</div>
+
 {% endblock %}

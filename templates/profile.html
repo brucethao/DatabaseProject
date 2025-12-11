@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile | Lakeside Zoo{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .register-box {
+        width: 380px;
+        margin: 50px auto;
+        background-color: white;
+        border-radius: 8px;
+        padding: 25px 35px;
+        box-shadow: 0 0 8px #cccccc;
+    }
+
+    .input-group { margin-bottom: 15px; }
+
+    label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #2d5a27;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        width: 100%;
+        padding: 10px;
+        display: block;
+        border-radius: 4px;
+        border: 1px solid #cccccc;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    /* BUTTONS CONTAINER */
+    .button-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .register-btn {
+        flex: 1;
+        padding: 12px;
+        background-color: #2d5a27;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .register-btn:hover { background-color: #23461f; }
+
+    /* CANCEL BUTTON STYLE */
+    .cancel-btn {
+        flex: 1;
+        padding: 12px;
+        background-color: #ccc;
+        color: #333;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 13.33px;
+        border: none;
+    }
+    .cancel-btn:hover { background-color: #bbb; }
+
+</style>
+
+<div class="register-box">
+    <h2>Edit Profile Details</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: red; font-weight: bold; text-align: center;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <div class="input-group">
+            <label for="id_firstname">First Name</label>
+            <input type="text" id="id_firstname" name="first_name"
+                   value="{{ user.first_name }}" placeholder="Enter your first name">
+        </div>
+
+        <div class="input-group">
+            <label for="id_lastname">Last Name</label>
+            <input type="text" id="id_lastname" name="last_name"
+                   value="{{ user.last_name }}" placeholder="Enter your last name">
+        </div>
+
+        <div class="input-group">
+            <label for="id_email">Email</label>
+            <input type="email" id="id_email" name="email"
+                   value="{{ user.email }}" placeholder="Enter your email">
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 0.9rem; color: #666; text-align: center;">Change Password (Optional)</p>
+
+        <div class="input-group">
+            <label for="id_password1">Old Password</label>
+            <input type="password" id="id_password1" name="old_password" placeholder="Current password">
+        </div>
+
+        <div class="input-group">
+            <label for="id_password2">New Password</label>
+            <input type="password" id="id_password2" name="new_password" placeholder="New password">
+        </div>
+
+        <div class="button-row">
+            <a href="{% url 'home' %}" class="cancel-btn">Cancel</a>
+
+            <button type="submit" class="register-btn">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
