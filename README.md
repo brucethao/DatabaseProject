@@ -1,4 +1,4 @@
-# DatabaseProject
+# Lakeside Zoo
 1. Make sure PyCharm and MySQL Workbench are installed. You will need to log into MySQL Workbench. 
 2. Clone the repository into Pycharm.
 3. Set up configuration.
