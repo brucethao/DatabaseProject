@@ -19,7 +19,7 @@ from django.urls import path
 
 from Zootopia.models import Animal
 from Zootopia.views import HomePage, Login, Register, AnimalPage, Region, Logout, VisitUs, Dashboard, Profile, \
-    ZooKeeperDashboard, AnimalPageDetails
+    ZooKeeperDashboard, AnimalPageDetails, Reset
 
 urlpatterns = [
     path('admin/', admin.site.urls),

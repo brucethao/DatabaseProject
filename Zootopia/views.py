@@ -42,6 +42,7 @@ class AnimalPageDetails(View):
             'Red': 'red.jpg',
             'Rick': 'rick.jpeg',
             'Tigress': 'tigress.jpg',
+            'Smoke': 'smoke.jpg', #just wanted to put my cat in here since I didn't get time to make a page for him :((
         }
 
         image_file = image_map.get(name, None)
