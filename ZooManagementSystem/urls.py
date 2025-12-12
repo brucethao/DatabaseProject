@@ -35,4 +35,5 @@ urlpatterns = [
     path('logout/', Logout.as_view(), name='logout'),
     path('register/', Register.as_view(), name='register'),
     path('visitus/', VisitUs.as_view(), name='visitus'),
+    path('reset/', Reset.as_view(), name='reset'),
 ]

@@ -252,3 +252,29 @@ class Register(View):
             )
 
         return redirect('login')
+
+class Reset(View):
+    def get(self, request):
+        return render(request, 'reset.html')
+
+    def post(self, request):
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+
+        if not username or not email or not password1 or not password2:
+            messages.error(request, 'Please fill all fields')
+            return redirect('reset')
+        elif User.objects.filter(username=username, email=email).exists():
+            if password1 == password2:
+                myUser = User.objects.get(username=username, email=email)
+                myUser.set_password(password1)
+                myUser.save()
+                return redirect('login')
+            else:
+                messages.error(request, 'Passwords do not match')
+                return redirect('reset')
+        else:
+            messages.error(request, 'Username does not exist\n Please try again.')
+            return redirect('reset')
