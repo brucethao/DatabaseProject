@@ -1,3 +1,9 @@
+-- 2 default zookeepers: spongebop and patricc.
+-- You will NOT be able to log into these users.
+-- For best pratices, Django requires password hashing.
+-- If you desire to log into these user accounts, you will need to update the password using Django's admin site while logged into an admin user.
+-- This will hash the updated password.
+
 -- select * from `zootopia_classification`;
 insert into `zootopia_classification`(type)
 values
