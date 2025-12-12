@@ -129,7 +129,6 @@ class ZooKeeperDashboard(View):
         animals = Animal.objects.all().prefetch_related(
             'diet_set',
             'animalfeedinglog_set',
-            'animalfeedinglog_set',
             'animalmedicationlog_set'
         )
         # no direct relationship to animals, but we need it for selecting the options for a new medical record
