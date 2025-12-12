@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %} Animals of {{ region }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .animal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+        padding: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .animal-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .animal-card h3 {
+        margin-top: 0;
+        color: #2d5a27; /* Dark Green */
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+
+    .animal-card h4 {
+        display: inline-block;
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin: 5px 0 15px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .animal-card p {
+        color: #555;
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+
+    .empty-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-size: 1.2rem;
+        color: #666;
+        padding: 50px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+</style>
+
+<h1 style="text-align: center; margin-top: 40px; color: #2d5a27;">
+    Animals of {{ region }}
+</h1>
+
+<div class="animal-grid">
+    {% for animal in animals %}
+        <a href="{% url 'animalpagedetails' region animal.name %}" style="text-decoration: none; color: inherit; display: block;">
+
+            <div class="animal-card">
+                <h3>{{ animal.name }}</h3>
+                <h4>{{ animal.animal_habitat.habitat }}</h4>
+                <p><strong>Species:</strong> {{ animal.species }}</p>
+            </div>
+
+        </a>
+    {% empty %}
+        <div class="empty-message">
+            <p>No animals from this region at the moment! D:</p>
+            <a href="{% url 'animals' %}" style="color: #2d5a27; font-weight: bold;">Return to Map</a>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

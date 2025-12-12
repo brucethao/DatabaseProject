@@ -1,15 +1,73 @@
 {% extends 'base.html' %}
 
-{% block title %}Welcome to Lakeside Zoo{% endblock %}
+{% block title %}Animals{% endblock %}
 
 {% block content %}
-    <main class="container">
-        <!-- Hero section -->
-        <section class="hero">
-            <h1 class="hero-title">Lakeside Zoo Animals</h1>
-            <p class="hero-subtitle">
-                Here at Lakeside Zoo, our mission is rescue and inhabit animals from around the world to ensure
-                that. Below you can explore the animals that are currently inhabiting the Lakeside Zoo.
-        </section>
-    </main>
+
+<style>
+
+    /* 2. REGION GRID STYLES */
+    .regions-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .section-heading {
+        color: #2d5a27;
+        margin-bottom: 30px;
+        font-size: 2rem;
+    }
+
+    .region-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    /* 3. BUTTON STYLES */
+    .region-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #2d5a27;
+        color: white;
+        text-decoration: none;
+        padding: 40px 20px;
+        border-radius: 12px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+</style>
+
+<main class="container">
+
+    <section class="hero">
+        <h1 class="hero-title">Lakeside Zoo Animals</h1>
+        <p class="hero-subtitle">
+            Here at Lakeside Zoo, our mission is to rescue and inhabit animals from around the world.
+            Below you can explore the diverse species currently inhabiting our sanctuary.
+        </p>
+    </section>
+
+    <section class="regions-container">
+        <h1 class="section-heading">
+            Explore by Region
+        </h1>
+
+        <div class="region-grid">
+            <a href="{% url 'region' 'Africa' %}" class="region-btn">Africa</a>
+            <a href="{% url 'region' 'Antarctica' %}" class="region-btn">Antarctica</a>
+            <a href="{% url 'region' 'Asia' %}" class="region-btn">Asia</a>
+            <a href="{% url 'region' 'Australia' %}" class="region-btn">Australia</a>
+            <a href="{% url 'region' 'Europe' %}" class="region-btn">Europe</a>
+            <a href="{% url 'region' 'North America' %}" class="region-btn">North America</a>
+            <a href="{% url 'region' 'South America' %}" class="region-btn">South America</a>
+        </div>
+    </section>
+
+</main>
 {% endblock %}
