@@ -8,19 +8,19 @@
         <!-- Hero section -->
         <section class="hero">
             {% if user.is_authenticated and user.is_zookeeper %}
-                <h1 class="hero-title">Welcome keeper, {{ user.first_name }}</h1>
+                <h1 class="hero-title">Welcome, Keeper {{ user.first_name }}</h1>
                 <p class="hero-subtitle">
-                    Ready to do zookeeper type shi?
+                    Ready for your shift today?
                 </p>
             {% elif user.is_authenticated and user.first_name %}
                 <h1 class="hero-title">Welcome, {{ user.first_name }}</h1>
                 <p class="hero-subtitle">
-                    Check out some of the animals idiot!
+                    Come check out the animals at our zoo!
                 </p>
             {% else %}
                 <h1 class="hero-title">Welcome to the Lakeside Zoo</h1>
                 <p class="hero-subtitle">
-                    Animals live here lol
+                    Come check out the animals at our zoo!
                 </p>
             {% endif %}
         </section>

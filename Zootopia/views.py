@@ -1,6 +1,7 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.views import View
 from Zootopia.models import Animal, User, AnimalMedicationLog, AnimalFeedingLog, Medication, Zookeeper, Food
 
@@ -29,14 +30,30 @@ class AnimalPageDetails(View):
             name=name,
             animal_habitat__continent=region
         )
+        #image map for animals
+        image_map = {
+            'Big Back': 'Bigback.png',
+            'King Julien': 'kingjulien.png',
+            'Leila': 'leila.jpeg',
+            'Madison': 'Madison-1.jpg.optimal.jpg',
+            'Max': 'max.jpg',
+            'Mort': 'mort.png',
+            'Rich': 'please work.jpg',
+            'Red': 'red.jpg',
+            'Rick': 'rick.jpeg',
+            'Tigress': 'tigress.jpg',
+        }
 
-        # 2. CONTEXT
+        image_file = image_map.get(name, None)
+
+        image_path = f"images/{image_file}"
+
         context = {
             'animal': selected_animal,
             'region': region,
+            'image_path': image_path,
         }
 
-        # 3. RENDER
         return render(request, 'animal_page.html', context)
 
 
@@ -54,12 +71,6 @@ class Dashboard(View):
         name = request.user.first_name
         context = {"name": name}
         return render(request, 'dashboard.html', context)
-
-
-from django.shortcuts import render, redirect
-from django.views import View
-from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
 
 
 class Profile(View):
@@ -129,8 +140,63 @@ class ZooKeeperDashboard(View):
         }
         return render(request, 'zookeeperDash.html', context)
 
-    def post(self, request):
-        pass
+    def post(self, request, name):
+        if not request.user.is_zookeeper:
+            return redirect('home')
+
+        current_zookeeper = get_object_or_404(Zookeeper, user=request.user)
+        name = name
+
+        action = request.POST.get('action')
+
+        if action == 'add_feed':
+            AnimalFeedingLog.objects.create(
+                animal_id=request.POST.get('animal_id'),
+                food_name_id=request.POST.get('food_id'),
+                amount=request.POST.get('amount'),
+                zookeeper=current_zookeeper,
+                last_fed=timezone.now()
+            )
+            messages.success(request, "Feeding added successfully!")
+
+        elif action == 'edit_feed':
+            log_id = request.POST.get('feed_log_id')
+            log = get_object_or_404(AnimalFeedingLog, id=log_id)
+            log.food_name_id = request.POST.get('food_id')
+            log.amount = request.POST.get('amount')
+            log.save()
+            messages.success(request, "Feeding updated!")
+
+        elif action == 'delete_feed':
+            log_id = request.POST.get('feed_log_id')
+            AnimalFeedingLog.objects.filter(id=log_id).delete()
+            messages.success(request, "Feeding record deleted.")
+
+            # --- MEDICATION LOGIC ---
+        elif action == 'add_med':
+            AnimalMedicationLog.objects.create(
+                animal_id=request.POST.get('animal_id'),
+                medication_id=request.POST.get('medication_id'),
+                medication_amount=request.POST.get('amount'),
+                date=timezone.now()
+            )
+            messages.success(request, "Medical record added!")
+
+        elif action == 'edit_med':
+            log_id = request.POST.get('med_log_id')
+            log = get_object_or_404(AnimalMedicationLog, id=log_id)
+            log.medication_id = request.POST.get('medication_id')
+            log.medication_amount = request.POST.get('amount')
+            log.save()
+            messages.success(request, "Medical record updated!")
+
+        elif action == 'delete_med':
+            log_id = request.POST.get('med_log_id')
+            AnimalMedicationLog.objects.filter(id=log_id).delete()
+            messages.success(request, "Medical record deleted.")
+
+        return redirect(request.path)
+
 
 class Login(View):
     def get(self, request):

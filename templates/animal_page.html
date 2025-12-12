@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ animal.name }} | Lakeside Zoo{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Main Container */
+    .detail-container {
+        max-width: 900px;
+        margin: 50px auto;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        display: flex;
+    }
+
+    /* Left Side: Image Area */
+    .animal-image-section {
+        background-color: #e8f5e9;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+    }
+
+    /* Right Side: Info Area */
+    .animal-info-section {
+        flex: 1.5;
+        padding: 40px;
+    }
+
+    /* Typography */
+    .animal-name {
+        margin-top: 0;
+        color: #2d5a27;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .animal-meta {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-right: 10px;
+    }
+
+    .badge-habitat { background-color: #e3f2fd; color: #1565c0; }
+    .badge-species { background-color: #f3e5f5; color: #7b1fa2; }
+
+    .bio-text {
+        line-height: 1.6;
+        color: #333;
+        font-size: 1.05rem;
+    }
+
+    /* Stats Grid (Age, Weight, etc.) */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 30px;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .stat-box strong {
+        display: block;
+        color: #2d5a27;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="detail-container">
+    
+    <div class="animal-image-section">
+    {% load static %}
+
+    <img src="{% static image_path %}" alt="{{ animal.name }}"
+         style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px 0 0 12px;">
+    </div>
+</div>
+
+    <div class="animal-info-section">
+        <h1 class="animal-name">{{ animal.name }}</h1>
+
+        <div class="animal-meta">
+            <span class="badge badge-species">{{ animal.species }}</span>
+            <span class="badge badge-habitat">{{ animal.animal_habitat.habitat }}</span>
+        </div>
+
+        <h3>Biography</h3>
+        <div class="bio-text">
+            {{ animal.description|linebreaks }}
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <strong>Age</strong>
+                {{ animal.age }} years old
+            </div>
+            <div class="stat-box">
+                <strong>Weight</strong>
+                {{ animal.weight }} kg
+            </div>
+            <div class="stat-box">
+                <strong>Region</strong>
+                {{ animal.animal_habitat.continent }}
+            </div>
+            <div class="stat-box">
+                <strong>Classification</strong>
+                {{ animal.classification.type }}
+            </div>
+        </div>
+        
+        <br>
+        <a href="javascript:history.back()" style="color: #666; text-decoration: none;">← Back to List</a>
+    </div>
+</div>
+
+{% endblock %}
